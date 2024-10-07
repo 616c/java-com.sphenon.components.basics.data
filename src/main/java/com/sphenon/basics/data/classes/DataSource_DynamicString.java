@@ -1,7 +1,7 @@
 package com.sphenon.basics.data.classes;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -25,7 +25,7 @@ import com.sphenon.basics.data.tplinst.*;
 import java.util.Map;
 import java.util.HashMap;
 
-public class DataSource_DynamicString {
+public class DataSource_DynamicString extends DataSourceBase<String> {
 
     public DataSource_DynamicString (CallContext context) {
     }

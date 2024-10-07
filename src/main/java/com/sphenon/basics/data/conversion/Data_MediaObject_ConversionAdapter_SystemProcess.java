@@ -1,7 +1,7 @@
 package com.sphenon.basics.data.conversion;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -49,6 +49,7 @@ public class Data_MediaObject_ConversionAdapter_SystemProcess implements Data_Me
     protected String               filename_substitution_regexp;
     protected String               filename_substitution_subst;
     protected String               disposition_filename;
+    protected String               encoding;
     protected Map                  arguments;
     protected RegularExpression    parrep = new RegularExpression("([^\\$]*(?:\\$+[^\\{\\$][^\\$]*)*)(?:\\$\\{([^\\}]+)\\})?");
     protected RegularExpression    grantre = new RegularExpression("grant\\((#?)([A-Za-z0-9_-]+)\\)\\?([^:]*):(.*)");
@@ -89,6 +90,10 @@ public class Data_MediaObject_ConversionAdapter_SystemProcess implements Data_Me
             if ((notification_level & Notifier.SELF_DIAGNOSTICS) != 0) { cc.sendTrace(context, Notifier.SELF_DIAGNOSTICS, "Deriving filename: result '%(result)'", "result", this.disposition_filename); }
         }
         return this.disposition_filename;
+    }
+
+    public String getEncoding(CallContext context) {
+        return this.encoding;
     }
 
     public java.util.Date getLastUpdate(CallContext call_context) {

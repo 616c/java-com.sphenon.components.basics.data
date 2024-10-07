@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -18,6 +18,7 @@ import com.sphenon.basics.context.*;
 import com.sphenon.basics.exception.*;
 import com.sphenon.basics.customary.*;
 import com.sphenon.basics.notification.*;
+import com.sphenon.basics.function.*;
 import com.sphenon.basics.metadata.*;
 import com.sphenon.basics.metadata.tplinst.*;
 import com.sphenon.basics.variatives.*;
@@ -30,12 +31,14 @@ import java.util.Date;
 public class Data_MediaObject_Stream implements Data_MediaObject {
     private InputStream               stream;
     private Variative_InputStream_    var_stream;
+    private Getter<InputStream>       stream_getter;
     private Type                      type;
     private TypeImpl_MediaObject      typemo;
     private String                    stringmo;
     private String                    filename;
     private String                    origin_locator;
     private Date                      last_update;
+    private String                    encoding;
 
     static protected long notification_level;
     static public    long adjustNotificationLevel(long new_level) { long old_level = notification_level; notification_level = new_level; return old_level; }
@@ -74,36 +77,51 @@ public class Data_MediaObject_Stream implements Data_MediaObject {
     }
 
     protected Data_MediaObject_Stream(CallContext context, InputStream stream, Type type, String filename, String origin_locator, Date last_update) {
-        this.stream     = stream;
-        this.var_stream = null;
-        this.filename   = filename;
-        this.type = type;
-        this.typemo = getMediaObjectType(context, this.type, null);
-        this.stringmo = typemo.getMediaType(context);
+        this.stream         = stream;
+        this.var_stream     = null;
+        this.stream_getter  = null;
+        this.filename       = filename;
+        this.type           = type;
+        this.typemo         = getMediaObjectType(context, this.type, null);
+        this.stringmo       = typemo.getMediaType(context);
         this.origin_locator = origin_locator;
-        this.last_update = last_update;
+        this.last_update    = last_update;
     }
 
     protected Data_MediaObject_Stream(CallContext context, Variative_InputStream_ stream, Type type, String filename, String origin_locator, Date last_update) {
-        this.stream     = null;
-        this.var_stream = stream;
-        this.filename = filename;
-        this.type = type;
-        this.typemo = getMediaObjectType(context, this.type, null);
-        this.stringmo = typemo.getMediaType(context);
+        this.stream         = null;
+        this.var_stream     = stream;
+        this.stream_getter  = null;
+        this.filename       = filename;
+        this.type           = type;
+        this.typemo         = getMediaObjectType(context, this.type, null);
+        this.stringmo       = typemo.getMediaType(context);
         this.origin_locator = origin_locator;
-        this.last_update = last_update;
+        this.last_update    = last_update;
+    }
+
+    protected Data_MediaObject_Stream(CallContext context, Getter<InputStream> stream_getter, Type type, String filename, String origin_locator, Date last_update) {
+        this.stream         = null;
+        this.var_stream     = null;
+        this.stream_getter  = stream_getter;
+        this.filename       = filename;
+        this.type           = type;
+        this.typemo         = getMediaObjectType(context, this.type, null);
+        this.stringmo       = typemo.getMediaType(context);
+        this.origin_locator = origin_locator;
+        this.last_update    = last_update;
     }
 
     protected Data_MediaObject_Stream(CallContext context, Data_MediaObject data) {
-        this.stream     = data.getStream(context);
-        this.var_stream = null;
-        this.filename   = data.getDispositionFilename(context);
-        this.type       = null;
-        this.typemo     = null;
-        this.stringmo   = data.getMediaType(context);
+        this.stream         = data.getStream(context);
+        this.var_stream     = null;
+        this.stream_getter  = null;
+        this.filename       = data.getDispositionFilename(context);
+        this.type           = null;
+        this.typemo         = null;
+        this.stringmo       = data.getMediaType(context);
         this.origin_locator = null;
-        this.last_update = data.getLastUpdate(context);
+        this.last_update    = data.getLastUpdate(context);
     }
 
     static public Data_MediaObject_Stream create(CallContext context, InputStream stream, String filename) {
@@ -116,6 +134,18 @@ public class Data_MediaObject_Stream implements Data_MediaObject {
 
     static public Data_MediaObject_Stream create(CallContext context, InputStream stream, Type type, String filename, String origin_locator) {
         return new Data_MediaObject_Stream(context, stream, type, filename, origin_locator, null);
+    }
+
+    static public Data_MediaObject_Stream create(CallContext context, Getter<InputStream> stream_getter, String filename) {
+        return new Data_MediaObject_Stream(context, stream_getter, null, filename, null, null);
+    }
+
+    static public Data_MediaObject_Stream create(CallContext context, Getter<InputStream> stream_getter, Type type, String filename) {
+        return new Data_MediaObject_Stream(context, stream_getter, type, filename, null, null);
+    }
+
+    static public Data_MediaObject_Stream create(CallContext context, Getter<InputStream> stream_getter, Type type, String filename, String origin_locator) {
+        return new Data_MediaObject_Stream(context, stream_getter, type, filename, origin_locator, null);
     }
 
     static public Data_MediaObject_Stream create(CallContext context, Variative_InputStream_ stream, Type type, String filename) {
@@ -142,6 +172,14 @@ public class Data_MediaObject_Stream implements Data_MediaObject {
         return this.filename;
     }
 
+    public String getEncoding(CallContext context) {
+        return this.encoding;
+    }
+
+    public void setEncoding(CallContext context, String encoding) {
+        this.encoding = encoding;
+    }
+
     public java.io.InputStream getInputStream(CallContext context) {
         return getCurrentStream(context);
     }
@@ -160,7 +198,10 @@ public class Data_MediaObject_Stream implements Data_MediaObject {
     }
 
     protected InputStream getCurrentStream(CallContext context) {
-        return this.stream == null ? this.var_stream.getVariant_InputStream_(context) : this.stream;
+        return   this.stream        != null ? this.stream
+               : this.stream_getter != null ? this.stream_getter.get(context)
+               : this.var_stream    != null ? this.var_stream.getVariant_InputStream_(context)
+               : null;
     }
 
     public void setStream(CallContext context, InputStream stream) {
@@ -188,6 +229,10 @@ public class Data_MediaObject_Stream implements Data_MediaObject {
             CustomaryContext.create((Context)context).throwEnvironmentFailure(context, ioe, "Upload failed");
             throw (ExceptionEnvironmentFailure) null; // compiler insists
         }
+    }
+
+    public String toString() {
+        return this.toString(com.sphenon.basics.context.classes.RootContext.getFallbackCallContext());
     }
 
     public Locator tryGetOrigin(CallContext context) {

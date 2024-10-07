@@ -1,7 +1,7 @@
 package com.sphenon.basics.many;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -41,6 +41,10 @@ public class VectorAdapter1ToN<T1,T2>
         super(context, component_type, source_vector);
         this.additional_arguments = additional_arguments;
         this.conversion_manager = conversion_manager;
+    }
+
+    public VectorAdapter1ToN(CallContext context, Type component_type, GenericVector<T2> source_vector, Object... additional_arguments) {
+        this(context, component_type, ConversionManager1ToNCache.<T2,T1>get(context), source_vector, additional_arguments);
     }
 
     public void setAdditionalArguments(CallContext context, Object... additional_arguments) {

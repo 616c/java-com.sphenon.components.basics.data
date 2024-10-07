@@ -1,7 +1,12 @@
 // instantiated with jti.pl from DataSource
+// please do not modify this file directly
+package com.sphenon.basics.data.tplinst;
+
+import com.sphenon.basics.data.*;
+import java.util.Date;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -13,11 +18,6 @@
   License for the specific language governing permissions and limitations
   under the License.
 *****************************************************************************/
-// please do not modify this file directly
-package com.sphenon.basics.data.tplinst;
-
-import com.sphenon.basics.data.*;
-import java.util.Date;
 
 import com.sphenon.basics.context.*;
 

@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -35,12 +35,20 @@ public class Data_Object_Object implements Data_Object {
     static public    long getNotificationLevel() { return notification_level; }
     static { notification_level = NotificationLocationContext.getLevel(_class); };
 
-    protected Data_Object_Object(CallContext context, Object object) {
-        this.object = object;
+    protected Data_Object_Object(CallContext context, Object object, Date last_update) {
+        this.object      = object;
+        this.last_update = last_update;
     }
 
     static public Data_Object_Object create(CallContext context, Object object) {
-        return new Data_Object_Object(context, object);
+        return new Data_Object_Object(context, object, null);
+    }
+
+    // default for 'last_update' in case of 'null' is 'now', i.e. it
+    // will be fixed to creation time of this instance; if dynamic
+    // time is required use other constructor
+    static public Data_Object_Object create(CallContext context, Object object, Date last_update) {
+        return new Data_Object_Object(context, object, last_update == null ? new Date() : last_update);
     }
 
     private Object object;
@@ -66,8 +74,10 @@ public class Data_Object_Object implements Data_Object {
         return this.instance_identifier;
     }
 
+    protected Date last_update;
+
     public Date getLastUpdate(CallContext context) {
-        return new Date();
+        return (this.last_update == null ? new Date() : this.last_update);
     }
 
     public Locator tryGetOrigin(CallContext context) {

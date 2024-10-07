@@ -1,7 +1,7 @@
 package com.sphenon.basics.data.conversion;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -51,6 +51,10 @@ public class Data_MediaObject_ConversionAdapter extends Data_ConversionAdapter i
 
     public String getDispositionFilename(CallContext context) {
         return getDataMediaObject(context).getDispositionFilename(context);
+    }
+
+    public String getEncoding(CallContext context) {
+        return getDataMediaObject(context).getEncoding(context);
     }
 
     public InputStream getInputStream(CallContext context) {

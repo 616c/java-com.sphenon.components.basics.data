@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -15,9 +15,11 @@ package com.sphenon.basics.data;
 *****************************************************************************/
 
 import com.sphenon.basics.context.*;
+import com.sphenon.basics.context.classes.*;
 import com.sphenon.basics.exception.*;
 import com.sphenon.basics.customary.*;
 import com.sphenon.basics.notification.*;
+import com.sphenon.basics.configuration.*;
 import com.sphenon.basics.metadata.*;
 import com.sphenon.basics.metadata.tplinst.*;
 import com.sphenon.basics.variatives.*;
@@ -38,17 +40,17 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 public class Data_MediaObject_URL extends Data_MediaObject_Stream {
+    static final public Class _class = Data_MediaObject_URL.class;
 
-    protected String  url_string;
+    static protected Configuration config;
+    static { config = Configuration.create(RootContext.getInitialisationContext(), _class); };
 
     static protected long notification_level;
     static public    long adjustNotificationLevel(long new_level) { long old_level = notification_level; notification_level = new_level; return old_level; }
     static public    long getNotificationLevel() { return notification_level; }
+    static { notification_level = NotificationLocationContext.getLevel(_class); };
 
-    static {
-        CallContext context = com.sphenon.basics.context.classes.RootContext.getInitialisationContext();
-        notification_level = NotificationLocationContext.getLevel(context, "com.sphenon.basics.data.Data_MediaObject_URL");
-    }
+    protected String  url_string;
 
     protected Data_MediaObject_URL(CallContext context, String url_string, Type type, String filename, String origin_locator, Date last_update) {
         super(context, (InputStream) null, type, filename, origin_locator, last_update);
@@ -139,10 +141,17 @@ public class Data_MediaObject_URL extends Data_MediaObject_Stream {
 
     // protected String sessioncookie;
 
-    static public String proxy_host;
-    static public String proxy_port;
-    static public String proxy_user;
-    static public String proxy_passwd;
+    static protected String proxy_host;
+    static protected String proxy_port;
+    static protected String proxy_user;
+    static protected String proxy_passwd;
+
+    static public void setProxy(CallContext context, String proxy_host, String proxy_port, String proxy_user, String proxy_passwd) {
+        Data_MediaObject_URL.proxy_host   = proxy_host;
+        Data_MediaObject_URL.proxy_port   = proxy_port;
+        Data_MediaObject_URL.proxy_user   = proxy_user;
+        Data_MediaObject_URL.proxy_passwd = proxy_passwd;
+    }
 
     protected static volatile boolean initialised;
 
@@ -152,10 +161,10 @@ public class Data_MediaObject_URL extends Data_MediaObject_Stream {
                 if (initialised == false) {
                     initialised = true;
 
-                    if (proxy_host != null  ) { proxy_host    = System.getenv("proxy_host"); }
-                    if (proxy_port != null  ) { proxy_port    = System.getenv("proxy_port"); }
-                    if (proxy_user != null  ) { proxy_user    = System.getenv("proxy_user"); }
-                    if (proxy_passwd != null) { proxy_passwd  = System.getenv("proxy_passwd"); }
+                    if (proxy_host   == null) { proxy_host    = config.get(context, "ProxyHost", System.getenv("proxy_host")); }
+                    if (proxy_port   == null) { proxy_port    = config.get(context, "ProxyPort", System.getenv("proxy_port")); }
+                    if (proxy_user   == null) { proxy_user    = config.get(context, "ProxyUsername", System.getenv("proxy_user")); }
+                    if (proxy_passwd == null) { proxy_passwd  = config.get(context, "ProxyPassword", System.getenv("proxy_passwd")); }
                     
                     /* Proxy Magic */
                     if (proxy_host != null)
@@ -171,7 +180,7 @@ public class Data_MediaObject_URL extends Data_MediaObject_Stream {
                             Authenticator.setDefault(new Authenticator() {
                                     protected PasswordAuthentication getPasswordAuthentication() {
                                         System.err.println("\nAuth was called\n");
-                                        return new PasswordAuthentication(proxy_user,proxy_passwd.toCharArray());
+                                        return new PasswordAuthentication(proxy_user, proxy_passwd.toCharArray());
                                     }
                                 });
                         }

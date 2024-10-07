@@ -1,7 +1,7 @@
 package com.sphenon.basics.many;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -15,21 +15,21 @@ package com.sphenon.basics.many;
 *****************************************************************************/
 
 import com.sphenon.basics.context.*;
-import com.sphenon.basics.context.classes.*;
 import com.sphenon.basics.exception.*;
-import com.sphenon.basics.notification.Notifier;
-import com.sphenon.basics.notification.NotificationLevel;
-import com.sphenon.basics.notification.NotificationContext;
-import com.sphenon.basics.notification.NotificationLocationContext;
+import com.sphenon.basics.notification.*;
 import com.sphenon.basics.customary.*;
-import com.sphenon.basics.metadata.Type;
-import com.sphenon.basics.metadata.Typed;
-import com.sphenon.basics.metadata.TypeManager;
+import com.sphenon.basics.many.*;
+import com.sphenon.basics.many.returncodes.*;
 import com.sphenon.basics.data.conversion.returncodes.*;
+import com.sphenon.basics.expression.*;
+import com.sphenon.basics.metadata.*;
+import com.sphenon.basics.debug.*;
+import com.sphenon.basics.metadata.Type;
 
 import java.util.List;
 
 public interface ConversionManager1ToN<T2,T1> {
 
     public List<T1> convertToMany(CallContext context, T2 source_item, Object... additional_arguments) throws ConversionFailure;
+
 }

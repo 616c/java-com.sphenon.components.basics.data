@@ -1,7 +1,7 @@
 package com.sphenon.basics.many;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -58,7 +58,7 @@ public class VectorFilterByExpression<T>
         try {
             return (Boolean) condo;
         } catch (ClassCastException cce) {
-            CustomaryContext.create((Context)context).throwConfigurationError(context, cce, "Expression '%(expression)' in VectorFilterByExpression≤ItemType,IndexType≥ does not evaluate to a Boolean instance, but to a '%(got)'", "got", condo.getClass(), "expression", this.expression.getExpression(context));
+            CustomaryContext.create((Context)context).throwConfigurationError(context, cce, "Expression '%(expression)' in VectorFilterByExpression does not evaluate to a Boolean instance, but to a '%(got)'", "got", condo.getClass(), "expression", this.expression.getExpression(context));
             throw (ExceptionConfigurationError) null; // compiler insists
         }
     }

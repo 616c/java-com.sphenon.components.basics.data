@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -23,6 +23,7 @@ import com.sphenon.basics.metadata.tplinst.*;
 import com.sphenon.basics.variatives.*;
 import com.sphenon.basics.variatives.tplinst.*;
 import com.sphenon.basics.locating.*;
+import com.sphenon.basics.locating.factories.*;
 import java.io.*;
 import java.util.Date;
 
@@ -31,6 +32,7 @@ public class Data_MediaObject_String implements Data_MediaObject {
     protected ByteArrayOutputStream baos;
     private TypeImpl_MediaObject typemo;
     private String disposition_name;
+    protected String encoding;
 
     static protected long notification_level;
     static public    long adjustNotificationLevel(long new_level) { long old_level = notification_level; notification_level = new_level; return old_level; }
@@ -42,7 +44,7 @@ public class Data_MediaObject_String implements Data_MediaObject {
     }
 
     protected Data_MediaObject_String(CallContext context, String text, String type_extension) {
-        this.typemo = (type_extension == null ? null : (TypeImpl_MediaObject) TypeManager.getMediaType (context, type_extension));
+        this.typemo = ((TypeImpl_MediaObject) (type_extension == null ? TypeManager.getMediaTypeRoot(context) : TypeManager.getMediaType (context, type_extension)));
         this.text = text;
         this.disposition_name = "plain.txt";
     }
@@ -51,9 +53,19 @@ public class Data_MediaObject_String implements Data_MediaObject {
         return new Data_MediaObject_String(context, text, type_extension);
     }
 
+    protected Data_MediaObject_String(CallContext context, String text, TypeImpl_MediaObject typemo, String disposition_name) {
+        this.typemo = typemo;
+        this.text = text;
+        this.disposition_name = disposition_name;
+    }
+
+    static public Data_MediaObject_String create(CallContext context, String text, String mime_type, String disposition_name) {
+        return new Data_MediaObject_String(context, text, (TypeImpl_MediaObject) TypeManager.getMediaTypeMIME (context, mime_type), disposition_name);
+    }
+
     public String getString(CallContext context) {
         try {
-            if( baos != null ){
+            if (baos != null) {
                 this.text = baos.toString("UTF-8");
             }
         } catch (UnsupportedEncodingException uee) {
@@ -80,9 +92,17 @@ public class Data_MediaObject_String implements Data_MediaObject {
     }
 
     public void setDispositionFilename(CallContext context, String name) {
-        this.disposition_name=name;
+        this.disposition_name = name;
     }
     
+    public String getEncoding(CallContext context) {
+        return this.encoding;
+    }
+
+    public void setEncoding(CallContext context, String encoding) {
+        this.encoding = encoding;
+    }
+
     public java.io.InputStream getInputStream(CallContext context) {
         ByteArrayInputStream bais = null;
         try {
@@ -108,6 +128,6 @@ public class Data_MediaObject_String implements Data_MediaObject {
     }
 
     public Locator tryGetOrigin(CallContext context) {
-        return null;
+        return Factory_Locator.tryConstruct(context, "oorl://Ephemeral/" + com.sphenon.basics.encryption.EncryptionUtilities.getHash(context, getString(context)));
     }
 }

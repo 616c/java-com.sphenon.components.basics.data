@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -19,6 +19,7 @@ import java.util.Date;
 
 public interface Data_MediaObject extends Data {
     public String getMediaType(CallContext context);
+    public String getEncoding(CallContext context);
     public String getDispositionFilename(CallContext context);
     public java.io.InputStream getStream(CallContext call_context);
     public java.io.InputStream getInputStream(CallContext call_context);

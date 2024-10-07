@@ -1,7 +1,7 @@
 package com.sphenon.basics.data;
 
 /****************************************************************************
-  Copyright 2001-2018 Sphenon GmbH
+  Copyright 2001-2024 Sphenon GmbH
 
   Licensed under the Apache License, Version 2.0 (the "License"); you may not
   use this file except in compliance with the License. You may obtain a copy
@@ -31,6 +31,7 @@ public class Data_MediaObject_CharSequence implements Data_MediaObject {
     protected ByteArrayOutputStream baos;
     private TypeImpl_MediaObject typemo;
     private String disposition_name;
+    protected String encoding;
 
     static protected long notification_level;
     static public    long adjustNotificationLevel(long new_level) { long old_level = notification_level; notification_level = new_level; return old_level; }
@@ -83,6 +84,14 @@ public class Data_MediaObject_CharSequence implements Data_MediaObject {
         this.disposition_name=name;
     }
     
+    public String getEncoding(CallContext context) {
+        return this.encoding;
+    }
+
+    public void setEncoding(CallContext context, String encoding) {
+        this.encoding = encoding;
+    }
+
     public java.io.InputStream getInputStream(CallContext context) {
         ByteArrayInputStream bais = null;
         try {
